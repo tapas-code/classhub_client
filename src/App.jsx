@@ -12,7 +12,7 @@ import ManageTeachers from "./pages/ManageTeachers";
 import ManageStudents from "./pages/ManageStudents";
 import ManageClassrooms from "./pages/ManageClassrooms";
 import Home from "./pages/Home";
-import SignUp from "./pages/Signup";
+import SignUp from "./pages/SignUp";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 
