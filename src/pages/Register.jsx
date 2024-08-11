@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../store/auth";
 import { BASE_URL } from "../services/helper";
 
-const SignUp = ({role}) => {
+const Register = ({role}) => {
   const [userSignUp, setUserSignUp] = useState({
     username: "",
     email: "",
@@ -154,4 +154,4 @@ const SignUp = ({role}) => {
   );
 };
 
-export default SignUp;
+export default Register;

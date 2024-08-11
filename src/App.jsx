@@ -4,7 +4,7 @@ import TeacherDashboard from "./pages/TeacherDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
-import Signup from "./pages/Signup";
+import Signup from "./pages/Register";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PrivateRoute from "./services/PrivateRoute";
@@ -12,7 +12,7 @@ import ManageTeachers from "./pages/ManageTeachers";
 import ManageStudents from "./pages/ManageStudents";
 import ManageClassrooms from "./pages/ManageClassrooms";
 import Home from "./pages/Home";
-import SignUp from "./pages/SignUp";
+import Register from "./pages/Register";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 
@@ -24,15 +24,15 @@ const App = () => {
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login />} /> 
           <Route path="/logout" element={<Logout />} />
           <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/contact" element={<Contact />} /> 
           <Route
-            path="/signup"
+            path="/register"
             element={
               <PrivateRoute allowedRoles={["Principal"]}>
-                <Signup />
+                <Register />
               </PrivateRoute>
             }
           />
@@ -56,7 +56,7 @@ const App = () => {
             path="/principal/teacher/add"
             element={
               <PrivateRoute allowedRoles={["Principal"]}>
-                <SignUp role="Teacher" />
+                <Register role="Teacher" />
               </PrivateRoute>
             }
           />
@@ -72,7 +72,7 @@ const App = () => {
             path="/principal/student/add"
             element={
               <PrivateRoute allowedRoles={["Principal"]}>
-                <SignUp role="Student" />
+                <Register role="Student" />
               </PrivateRoute>
             }
           />
