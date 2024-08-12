@@ -5,7 +5,7 @@ import Sidebar from "./Sidebar";
 
 const Navbar = () => {
   const { isLoggedIn, userRole, userImg } = useAuth();
-  const profilePic = userImg !== "" ? userImg: "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp";
+  const profilePic = userImg !== "" ? userImg : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp";
 
   return (
     <div className="flex items-center py-4 px-8 bg-purple-800 text-gray-300">

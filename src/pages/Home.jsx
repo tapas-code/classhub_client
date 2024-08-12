@@ -1,5 +1,5 @@
 import React from "react";
-import HeroImg from "../assets/download.jpeg";
+import HeroImg from "../assets/hero.jpeg";
 import { useAuth } from "../store/auth";
 import { useNavigate } from "react-router-dom";
 

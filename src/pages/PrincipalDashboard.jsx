@@ -12,22 +12,22 @@ const PrincipalDashboard = () => {
       <div className="flex justify-evenly w-full flex-1 items-center -mt-6">
         <div className="card outline outline-indigo-500 min-h-56 text-gray-300 hover:bg-info hover:outline-none hover:text-black w-96 hover:cursor-pointer " onClick={()=> navigate('/principal/teacher')}>
           <div className="card-body">
-            <h2 className="card-title ">Teacher</h2>
-            <p>If a dog chews shoes whose shoes does he choose?</p>
+            <h2 className="card-title ">Manage Teachers</h2>
+            <p className="pt-2">Easily add, update, or delete teacher profiles. Assign teachers to specific classrooms. </p>
             
           </div>
         </div>
         <div className="card outline outline-indigo-500 min-h-56 text-gray-300 hover:bg-info hover:outline-none hover:text-black w-96 hover:cursor-pointer" onClick={()=> navigate('/principal/student')}>
           <div className="card-body">
-            <h2 className="card-title ">Student</h2>
-            <p>If a dog chews shoes whose shoes does he choose?</p>
+            <h2 className="card-title ">Manage Students</h2>
+            <p className="pt-2">Handle student information with ease. Assign students to the appropriate classrooms.</p>
             
           </div>
         </div>
         <div className="card outline outline-indigo-500 min-h-56 text-gray-300 hover:bg-info hover:outline-none hover:text-black w-96 hover:cursor-pointer" onClick={()=> navigate('/principal/classroom')}>
           <div className="card-body">
-            <h2 className="card-title">Classroom</h2>
-            <p>If a dog chews shoes whose shoes does he choose?</p>
+            <h2 className="card-title">Manage Classrooms</h2>
+            <p className="pt-2">Create and organize classrooms. Assign teachers and students to specific classes.</p>
             
           </div>
         </div>
