@@ -145,8 +145,8 @@ const Classroom = () => {
           </div>
 
           <div className="flex w-full px-8 pb-4">
-            <div className="card bg-base-300 rounded-box grid flex-grow place-items-start justify-start w-1/2">
-              <div className="mb-8">
+            <div className="card bg-base-300 rounded-box flex flex-grow items-start justify-start w-1/2">
+              <div className="mb-8 w-full">
                 <h3 className="text-xl font-semibold text-center py-4">
                   Assigned Students
                 </h3>
@@ -166,9 +166,9 @@ const Classroom = () => {
               </div>
             </div>
             <div className="divider divider-horizontal"></div>
-            <div className="card bg-base-300 rounded-box grid flex-grow place-items-start justify-start w-1/2">
-              <div className="mb-8">
-                <h3 className="text-xl font-semibold text-center py-4">
+            <div className="card bg-base-300 rounded-box flex flex-grow items-start justify-start w-1/2 ">
+              <div className="mb-8  w-full">
+                <h3 className="text-xl font-semibold text-center py-4 ">
                   Available Students
                 </h3>
                 {availableStudents.length > 0 ? (
