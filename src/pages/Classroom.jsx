@@ -1,112 +1,78 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { BASE_URL } from "../services/helper";
 import { useAuth } from "../store/auth";
+import { BASE_URL } from "../services/helper";
 
 const Classroom = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Get classroom ID from the route parameters
   const [classroom, setClassroom] = useState(null);
-  const [availableTeachers, setAvailableTeachers] = useState([]);
-  const [allStudents, setAllStudents] = useState([]);
+  const [availableStudents, setAvailableStudents] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
-  const [selectedTeacher, setSelectedTeacher] = useState("");
   const [error, setError] = useState(null);
   const { token } = useAuth();
 
-  // Fetch classroom details
-  useEffect(() => {
-    const fetchClassroom = async () => {
-      try {
-        const response = await fetch(
-          `${BASE_URL}/api/classroom/get-classroom/${id}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch classroom details");
+  // Fetch classroom details and available students
+  const fetchClassroomData = async () => {
+    try {
+      // Fetch classroom details
+      const classroomResponse = await fetch(
+        `${BASE_URL}/api/classroom/get-classroom/${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
+      );
 
-        const data = await response.json();
-        setClassroom(data.classroom);
-      } catch (err) {
-        setError(err.message);
+      if (!classroomResponse.ok) {
+        throw new Error("Failed to fetch classroom");
       }
-    };
 
-    fetchClassroom();
+      const classroomData = await classroomResponse.json();
+      setClassroom(classroomData.classroom);
+
+      // Fetch available students
+      const studentsResponse = await fetch(
+        `${BASE_URL}/api/classroom/available-students?classroomId=${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!studentsResponse.ok) {
+        throw new Error("Failed to fetch available students");
+      }
+
+      const studentsData = await studentsResponse.json();
+      setAvailableStudents(studentsData.students);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchClassroomData();
   }, [id, token]);
 
-  // Fetch available teachers
   useEffect(() => {
-    const fetchAvailableTeachers = async () => {
-      try {
-        const response = await fetch(
-          `${BASE_URL}/api/classroom/available-teachers`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    if (selectedStudents.length > 0) {
+      handleAddStudents();
+    }
+  }, [selectedStudents]);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch available teachers");
-        }
-
-        const data = await response.json();
-        setAvailableTeachers(data.teachers);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-
-    fetchAvailableTeachers();
-  }, [token]);
-
-  // Fetch available students (excluding those already assigned to the classroom)
-  useEffect(() => {
-    const fetchAvailableStudents = async () => {
-      try {
-        const response = await fetch(
-          `${BASE_URL}/api/classroom/available-students?classroomId=${id}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch available students");
-        }
-
-        const data = await response.json();
-        setAllStudents(data.students);
-        
-      } catch (error) {
-        console.error("Error fetching available students:", error);
-      }
-    };
-
-    fetchAvailableStudents();
-  }, [id, token]);
-
-  const handleAssignStudents = async () => {
+  const handleAddStudents = async () => {
     try {
       const response = await fetch(
         `${BASE_URL}/api/classroom/assign-students`,
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             studentIds: selectedStudents,
@@ -119,119 +85,131 @@ const Classroom = () => {
         throw new Error("Failed to assign students");
       }
 
-      const data = await response.json();
-      console.log("Students assigned successfully:", data);
-    } catch (error) {
-      console.error("Error assigning students:", error);
-    }
-  };
-
-  const handleStudentSelection = (studentId) => {
-    setSelectedStudents((prevSelected) =>
-      prevSelected.includes(studentId)
-        ? prevSelected.filter((id) => id !== studentId)
-        : [...prevSelected, studentId]
-    );
-  };
-
-  // Handle assigning teacher to the classroom
-  const handleAssignTeacher = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/api/classroom/assign-teacher`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ teacherId: selectedTeacher, classroomId: id }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to assign teacher");
-      }
-
-      const data = await response.json();
-      setClassroom(data.classroom); // Update classroom with the assigned teacher
+      // Refetch the classroom and available students to reflect changes in real-time
+      await fetchClassroomData();
+      setSelectedStudents([]); // Reset selected students
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const handleStudentCheckboxChange = (studentId, isChecked) => {
+    alert("Confirm Add Student");
+    setSelectedStudents((prevSelected) =>
+      isChecked
+        ? [...prevSelected, studentId]
+        : prevSelected.filter((id) => id !== studentId)
+    );
   };
 
   if (error) {
     return <div className="flex-1">Error: {error}</div>;
   }
 
-  if (!classroom) {
-    return <div className="flex-1">Loading...</div>;
-  }
-
   return (
-    <div className="flex-1 p-4">
-      <h1 className="text-2xl font-bold mb-4">{classroom.name}</h1>
-
-      <div>
-        <h2 className="text-xl font-semibold">
-          Teacher: {classroom.teacher?.username || "Not Assigned"}
-        </h2>
-
-        {!classroom.teacher && (
-          <div className="mt-4">
-            <label className="block text-lg font-semibold mb-2">
-              Assign a Teacher:
-            </label>
-            <select
-              className="select select-bordered w-full max-w-xs"
-              value={selectedTeacher}
-              onChange={(e) => setSelectedTeacher(e.target.value)}
-            >
-              <option value="">Select a Teacher</option>
-              {availableTeachers.map((teacher) => (
-                <option key={teacher._id} value={teacher._id}>
-                  {teacher.username}
-                </option>
-              ))}
-            </select>
-            <button
-              className="btn btn-primary mt-4"
-              onClick={handleAssignTeacher}
-              disabled={!selectedTeacher}
-            >
-              Assign Teacher
-            </button>
+    <div className="flex-1 p-4 overflow-auto">
+      {classroom && (
+        <>
+          <h2 className="text-2xl font-bold mb-4 text-center">
+            {classroom.name}
+          </h2>
+          <div className="mb-8 flex justify-center">
+            {/* <h3 className="text-xl font-semibold">Assigned Teacher</h3> */}
+            {classroom.teacher ? (
+              <>
+                <div className="card sm:card-side bg-base-300 shadow-xl max-w-lg w-full">
+                  <figure>
+                    <img
+                      src={classroom.teacher.userImg}
+                      alt={classroom.teacher.username}
+                      className="w-52"
+                    />
+                  </figure>
+                  <div className="card-body">
+                    <h2 className="card-title underline underline-offset-2">
+                      Teacher
+                    </h2>
+                    <p className="capitalize font-semibold text-lg">
+                      {classroom.teacher.username}
+                    </p>
+                    <p className="-mt-3"> ({classroom.teacher.email})</p>
+                    <div className="card-actions justify-end">
+                      <button className="btn btn-primary">Details</button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div>No teacher assigned</div>
+            )}
           </div>
-        )}
-      </div>
 
-      <h3 className="text-lg font-semibold mt-4">Students:</h3>
-      <ul className="list-disc pl-8">
-        {classroom.students.length > 0 ? (
-          classroom.students.map((student) => (
-            <li key={student._id}>{student.username}</li>
-          ))
-        ) : (
-          <li>No students assigned</li>
-        )}
-      </ul>
-      <div>
-        <h3>Available Students</h3>
-        <ul>
-          {allStudents.map((student) => (
-            <li key={student._id}>
-              <label>
-                <input
-                  type='checkbox'
-                  value={student._id}
-                  onChange={() => handleStudentSelection(student._id)}
-                />
-                {student.username}
-              </label>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <button onClick={handleAssignStudents} className='btn btn-primary'>
-        Assign Selected Students
-      </button>
+          <div className="flex w-full px-8 pb-4">
+            <div className="card bg-base-300 rounded-box grid flex-grow place-items-start justify-start w-1/2">
+              <div className="mb-8">
+                <h3 className="text-xl font-semibold text-center py-4">
+                  Assigned Students
+                </h3>
+                <div className="flex flex-wrap gap-8 px-8">
+                  {classroom.students.map((student) => (
+                    <div
+                      key={student._id}
+                      className="w-[124px] rounded-lg overflow-hidden relative hover:cursor-pointer hover:scale-105"
+                    >
+                      <img src={student.userImg} alt={student.username} />
+                      <div className="absolute text-center text-white font-semibold capitalize text-sm bottom-0 bg-purple-700 p-2 rounded-tr-lg">
+                        {student.username}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="divider divider-horizontal"></div>
+            <div className="card bg-base-300 rounded-box grid flex-grow place-items-start justify-start w-1/2">
+              <div className="mb-8">
+                <h3 className="text-xl font-semibold text-center py-4">
+                  Available Students
+                </h3>
+                {availableStudents.length > 0 ? (
+                  <div>
+                    <ul className="list-none flex flex-wrap gap-8 px-8">
+                      {availableStudents.map((student) => (
+                        <li key={student._id}>
+                          <label className="flex items-center">
+                            <input
+                              type="checkbox"
+                              className="hidden"
+                              value={student._id}
+                              onChange={(e) =>
+                                handleStudentCheckboxChange(
+                                  student._id,
+                                  e.target.checked
+                                )
+                              }
+                            />
+                            <div className="w-[124px] rounded-lg overflow-hidden relative hover:cursor-pointer hover:scale-105">
+                              <img
+                                src={student.userImg}
+                                alt={student.username}
+                              />
+                              <div className="absolute text-center text-white font-semibold capitalize text-sm bottom-0 bg-purple-700 p-2 rounded-tr-lg">
+                                {student.username}
+                              </div>
+                            </div>
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <div>No students available</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

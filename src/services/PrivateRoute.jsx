@@ -5,12 +5,12 @@ import { useAuth } from "../store/auth";
 const PrivateRoute = ({ children, allowedRoles }) => {
   const { isLoggedIn, userRole } = useAuth();
 
-  // if (!isLoggedIn) {
-  //   return <Navigate to="/login" />;
-  // }
+  if (!isLoggedIn) {
+    return <Navigate to="/home" />;
+  }
 
   if (!allowedRoles.includes(userRole)) {
-    return <Navigate to="/" />;
+    return <Navigate to="/home" />;
   }
 
   return children;
