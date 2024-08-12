@@ -6,4 +6,8 @@
     html:has(.drawer-auto-gutter .drawer-toggle:checked) {
         scrollbar-gutter: auto;
     }
+    :root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])) {
+        overflow: hidden;
+        scrollbar-gutter: auto;
+    }
 }
