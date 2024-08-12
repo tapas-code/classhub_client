@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../store/auth";
 import { BASE_URL } from "../services/helper";
+import { useNavigate } from "react-router-dom";
 
 const ManageClassrooms = () => {
   const [classrooms, setClassrooms] = useState([]);
@@ -8,6 +9,7 @@ const ManageClassrooms = () => {
   const [error, setError] = useState(null);
   const { token } = useAuth();
   const base_url = BASE_URL;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchClassrooms = async () => {
@@ -121,6 +123,7 @@ const ManageClassrooms = () => {
             <div
               key={cls._id}
               className="min-w-60 min-h-40 bg-primary shadow-lg flex items-end justify-center text-xl font-semibold text-black hover:scale-105 hover:cursor-pointer rounded-lg pb-3 "
+              onClick={()=>navigate(`/principal/classroom/${cls._id}`)}
             >
               {cls.name}
             </div>

@@ -15,6 +15,7 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import Classroom from "./pages/Classroom";
 
 const App = () => {
   return (
@@ -81,6 +82,14 @@ const App = () => {
             element={
               <PrivateRoute allowedRoles={["Principal"]}>
                 <ManageClassrooms />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/principal/classroom/:id"
+            element={
+              <PrivateRoute allowedRoles={["Principal"]}>
+                <Classroom />
               </PrivateRoute>
             }
           />
